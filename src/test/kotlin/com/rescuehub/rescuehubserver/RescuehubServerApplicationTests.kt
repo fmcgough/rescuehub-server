@@ -1,16 +1,21 @@
 package com.rescuehub.rescuehubserver
 
-import org.junit.Test
-import org.junit.runner.RunWith
+import io.kotlintest.specs.WordSpec
+import io.kotlintest.spring.SpringListener
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
-class RescuehubServerApplicationTests {
+class RescuehubServerApplicationTests : WordSpec() {
 
-	@Test
-	fun contextLoads() {
-	}
+    override fun listeners() = listOf(SpringListener)
+
+    init {
+        "Application" should {
+
+            "load the context" {
+                println("It works") // well it seems to
+            }
+        }
+    }
 
 }
