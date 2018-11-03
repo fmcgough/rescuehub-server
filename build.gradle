@@ -14,12 +14,17 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.palantir.docker-run' version '0.20.1'
+}
+
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'kotlin-jpa'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+
 
 group = 'com.rescuehub'
 version = '0.0.1-SNAPSHOT'
@@ -54,10 +59,11 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
-    implementation('org.springframework.cloud:spring-cloud-starter-oauth2')
+    // implementation('org.springframework.cloud:spring-cloud-starter-oauth2')
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("javax.xml.bind:jaxb-api:2.2.8")
+    implementation("org.postgresql:postgresql:42.2.5")
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('com.h2database:h2:1.4.194')
@@ -70,3 +76,16 @@ dependencyManagement {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
 }
+
+dockerRun {
+    name 'postgres'
+    image 'postgres:9.6-alpine'
+    ports '5432:5432'
+    env 'POSTGRES_USER': 'rescuehub-user', 'POSTGRES_PASSWORD': 'kittens@123', 'POSTGRES_DB': 'rescuehub'
+    clean true
+}
+
+bootRun.dependsOn 'dockerRun'
+# Need to run './gradlew dockerStop' after running Ctrl+C to stop the bootRun task
+
+
