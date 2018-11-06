@@ -46,6 +46,11 @@ repositories {
     mavenCentral()
 }
 
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
+}
 
 ext {
     springCloudVersion = 'Finchley.SR2'
@@ -83,9 +88,10 @@ dockerRun {
     ports '5432:5432'
     env 'POSTGRES_USER': 'rescuehub-user', 'POSTGRES_PASSWORD': 'kittens@123', 'POSTGRES_DB': 'rescuehub'
     clean true
+    volumes 'src/main/resources/schema.sql' : '/docker-entrypoint-initdb.d/schema.sql'
 }
 
 bootRun.dependsOn 'dockerRun'
-# Need to run './gradlew dockerStop' after running Ctrl+C to stop the bootRun task
+// Need to run './gradlew dockerStop' after running Ctrl+C to stop the bootRun task
 
 
