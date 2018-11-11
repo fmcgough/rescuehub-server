@@ -1,8 +1,6 @@
 package com.rescuehub.rescuehubserver.entities
 
 import javax.persistence.MappedSuperclass
-import javax.persistence.Id
-import javax.persistence.GeneratedValue
 import java.io.Serializable
 import org.springframework.data.util.ProxyUtils
 
@@ -14,13 +12,7 @@ abstract class AbstractJpaPersistable<T : Serializable> {
         private val serialVersionUID = -5554308939380869754L
     }
 
-    @Id
-    @GeneratedValue
-    private var id: T? = null
-
-    fun getId(): T? {
-        return id
-    }
+    abstract val id: T
 
     override fun equals(other: Any?): Boolean {
         other ?: return false
@@ -31,7 +23,7 @@ abstract class AbstractJpaPersistable<T : Serializable> {
 
         other as AbstractJpaPersistable<*>
 
-        return if (null == this.getId()) false else this.getId() == other.getId()
+        return this.id === other.id
     }
 
     override fun hashCode(): Int {

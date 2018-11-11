@@ -69,11 +69,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("javax.xml.bind:jaxb-api:2.2.8")
     implementation("org.postgresql:postgresql:42.2.5")
+    implementation("javax.inject:javax.inject:1")
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('com.h2database:h2:1.4.194')
     testImplementation('io.kotlintest:kotlintest-runner-junit5:3.1.7')
     testImplementation('io.kotlintest:kotlintest-extensions-spring:3.1.7')
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC1")
 }
 
 dependencyManagement {
