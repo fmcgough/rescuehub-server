@@ -16,6 +16,7 @@ buildscript {
 
 plugins {
     id 'com.palantir.docker-run' version '0.20.1'
+    id 'com.avast.gradle.docker-compose' version '0.8.12'
 }
 
 apply plugin: 'kotlin'
@@ -96,4 +97,11 @@ dockerRun {
 bootRun.dependsOn 'dockerRun'
 // Need to run './gradlew dockerStop' after running Ctrl+C to stop the bootRun task
 
+composeUp.dependsOn(bootJar)
+
+dockerCompose {
+    projectName = 'rescuehub'
+    useComposeFiles = ['docker-compose.yml', 'docker-compose.build.yml']
+    buildAdditionalArgs = ['--build-arg', "JAR_FILE=${jar.archiveName}"]
+}
 

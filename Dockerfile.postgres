@@ -1,0 +1,8 @@
+FROM postgres:9.6-alpine
+
+ENV POSTGRES_USER=rescuehub-user POSTGRES_PASSWORD=kittens@123 POSTGRES_DB=rescuehub
+
+ADD src/main/resources/schema.sql /docker-entrypoint-initdb.d/
+
+HEALTHCHECK --interval=3s --timeout=5s --retries=10 \
+    CMD pg_isready -U rescuehub-user -d rescuehub
