@@ -45,6 +45,9 @@ compileTestKotlin {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://naturalprogrammer.github.io/mvn-repository'
+    }
 }
 
 allOpen {
@@ -71,6 +74,7 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api:2.2.8")
     implementation("org.postgresql:postgresql:42.2.5")
     implementation("javax.inject:javax.inject:1")
+    implementation('com.naturalprogrammer.spring-lemon:spring-lemon-jpa:1.0.0.M8')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('com.h2database:h2:1.4.194')

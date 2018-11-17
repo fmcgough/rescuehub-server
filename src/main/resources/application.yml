@@ -1,0 +1,86 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/rescuehub
+    username: rescuehub-user
+    password: kittens@123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate.jdbc.lob.non_contextual_creation: true
+  database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  security:
+    oauth2:
+      client:
+        provider:
+          facebook:
+            user-info-uri: https://graph.facebook.com/me?fields=email,name,verified
+        registration:
+          # google:
+          #   client-id: xxxxx
+          #   client-secret: xxxx
+          facebook:
+            client-id: ${FB_CLIENT_ID}
+            client-secret: ${FB_CLIENT_SECRET}
+            redirect-uri-template: https://localhost:9000/social-login-success?code=
+
+  # JSON serialization settings
+  jackson:
+    default-property-inclusion: NON_NULL
+
+    serialization:
+      write-null-map-values: false
+
+    deserialization:
+      accept-single-value-as-array: true
+
+  devtools:
+    # Comment this if you want the app to restart
+    # when source code changes
+    restart.enabled: false
+    livereload.enabled: false
+
+server:
+  servlet.session.persistent: false
+  port: 8080
+  use-forward-headers: true
+
+logging:
+  level:
+    root: INFO
+    com.naturalprogrammer: DEBUG
+    com.rescuehub: DEBUG
+
+lemon:
+  application-url: https://localhost:9000
+  oauth2-authentication-success-url: https://localhost:9000/social-login-success?token=
+
+  # First ADMIN user
+  admin:
+    username: admin@example.com
+    password: admin!
+
+   # Spring Lemon flags
+   # enabled:
+      # json-prefix: false
+
+  cors:
+    # Comma separated values of CORS allowedOrigins
+    # If this property is not given, CORS is not configured
+    allowed-origins: https://localhost:9000
+
+  # recaptcha:
+  #   sitekey: 6LdwxRcUAAAAABkhOGWQXhl9FsR27D5YUJRuGzx0
+  #   secretkey: 6LdwxRcUAAAAADaG0Eo1qkYCco15cnngiBoBt2IO
+
+  jwt:
+    secret: T8f8tK4cv7S8aGhmlXBEIJPUp53uxO6FRcyV132h2DY0Jf5Va6TfYqbIUjIFx2aL
+    # expiration-millis: 864000000 # 10 days
+    # short-lived-millis: 120000   # two minutes
+
+  # Properties to be passed to client
+  shared:
+    fooBar: 123...

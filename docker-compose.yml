@@ -7,6 +7,9 @@ services:
           - 8080
         depends_on:
           - postgres
+        environment:
+          - FB_CLIENT_ID=${FB_CLIENT_ID}
+          - FB_CLIENT_SECRET=${FB_CLIENT_SECRET}
 
     postgres:
         hostname: postgres
@@ -19,6 +22,9 @@ services:
         depends_on:
           - server
         ports:
-          - 80:80
+          - 9000:9000
+        volumes:
+          - ${PWD}/certs:/certs
+
 
 
