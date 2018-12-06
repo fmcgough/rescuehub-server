@@ -1,7 +1,7 @@
 buildscript {
     ext {
         kotlinVersion = '1.2.51'
-        springBootVersion = '2.0.6.RELEASE'
+        springBootVersion = '2.1.0.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -67,14 +67,17 @@ test {
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
-    // implementation('org.springframework.cloud:spring-cloud-starter-oauth2')
+    implementation('org.springframework.security:spring-security-oauth2-client')
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("javax.xml.bind:jaxb-api:2.2.8")
     implementation("org.postgresql:postgresql:42.2.5")
     implementation("javax.inject:javax.inject:1")
-    implementation('com.naturalprogrammer.spring-lemon:spring-lemon-jpa:1.0.0.M8')
+    implementation('io.jsonwebtoken:jjwt:0.5.1')
+    // implementation('com.naturalprogrammer.spring-lemon:spring-lemon-jpa:1.0.0.M8')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('com.h2database:h2:1.4.194')

@@ -1,13 +1,38 @@
 package com.rescuehub.rescuehubserver.entities
 
-import javax.persistence.Entity
-import javax.persistence.Table
-
-import com.naturalprogrammer.spring.lemon.domain.AbstractUser
+import javax.persistence.*
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotNull
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.rescuehub.rescuehubserver.model.AuthProvider
 
 @Entity
-@Table(name="users")
-class User : AbstractUser<Long>() {
+@Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = ["email"])])
+data class User(
+    @Id
+    @GeneratedValue
+    override val id: Long = 0L,
 
-}
+    @Column(nullable = false)
+    val name: String,
+
+    @Email
+    @Column(nullable = false)
+    val email: String,
+
+    val imageUrl: String,
+
+    @Column(nullable = false)
+    val emailVerified: Boolean = false,
+
+    @JsonIgnore
+    val password: String,
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    val provider: AuthProvider,
+
+    val providerId: String
+
+) : AbstractJpaPersistable<Long>()
 
