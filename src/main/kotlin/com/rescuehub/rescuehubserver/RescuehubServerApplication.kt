@@ -10,7 +10,6 @@ import com.rescuehub.rescuehubserver.config.AppProperties
 @EnableJpaRepositories
 @EnableConfigurationProperties(AppProperties::class)
 class RescuehubServerApplication {
-
 }
 
 fun main(args: Array<String>) {

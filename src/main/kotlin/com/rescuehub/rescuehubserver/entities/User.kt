@@ -20,19 +20,15 @@ data class User(
     @Column(nullable = false)
     val email: String,
 
+    @Column
     val imageUrl: String,
-
-    @Column(nullable = false)
-    val emailVerified: Boolean = false,
 
     @JsonIgnore
     val password: String,
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    val provider: AuthProvider,
-
-    val providerId: String
+    val provider: AuthProvider
 
 ) : AbstractJpaPersistable<Long>()
 

@@ -1,26 +1,25 @@
 package com.rescuehub.rescuehubserver.security
 
 import com.rescuehub.rescuehubserver.entities.User
+import com.rescuehub.rescuehubserver.model.AuthProvider
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.oauth2.core.user.OAuth2User
 
 data class UserPrincipal(
         val id: Long,
         private val email: String,
         private val password: String,
-        private val authorities: Collection<GrantedAuthority>,
-        private val attributes: Map<String, Any> = emptyMap<String, Any>()) : OAuth2User, UserDetails {
-         
+        private val authorities: Collection<GrantedAuthority>) : UserDetails {
+
     companion object {
         fun create(user: User): UserPrincipal {
+            val role = when(user.provider) {
+                AuthProvider.FACEBOOK -> "FACEBOOK_USER"
+                AuthProvider.LOCAL -> "LOCAL_USER"
+            }
             return UserPrincipal(user.id, user.email, user.password,
-                listOf(SimpleGrantedAuthority("ROLE_USER")))
-        }
-
-        fun create(user: User, attributes: Map<String, Any>): UserPrincipal {
-            return create(user).copy(attributes = attributes)
+                listOf(SimpleGrantedAuthority(role)))
         }
     }
 
@@ -39,7 +38,4 @@ data class UserPrincipal(
 
     override fun getAuthorities(): Collection<GrantedAuthority> = authorities
 
-    override fun getAttributes(): Map<String, Any> = attributes
-
-    override fun getName(): String = id.toString()
 }

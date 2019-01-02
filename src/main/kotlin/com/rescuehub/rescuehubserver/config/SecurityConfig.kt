@@ -1,14 +1,13 @@
 package com.rescuehub.rescuehubserver.config
 
 import com.rescuehub.rescuehubserver.security.*
-import com.rescuehub.rescuehubserver.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository
-import com.rescuehub.rescuehubserver.security.oauth2.OAuth2AuthenticationFailureHandler
-import com.rescuehub.rescuehubserver.security.oauth2.OAuth2AuthenticationSuccessHandler
-import com.rescuehub.rescuehubserver.security.oauth2.CustomOAuth2UserService
+
+import org.springframework.core.env.Environment
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.BeanIds
@@ -22,6 +21,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
+import org.springframework.social.connect.ConnectionFactoryLocator
+import org.springframework.social.connect.support.ConnectionFactoryRegistry
+import org.springframework.social.connect.UsersConnectionRepository
+import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository
+import org.springframework.social.connect.web.ProviderSignInController
+
+import org.springframework.social.facebook.connect.FacebookConnectionFactory
+
+import javax.inject.Inject
 
 @Configuration
 @EnableWebSecurity
@@ -32,33 +40,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 )
 class SecurityConfig(
     @Autowired val userDetailsService: CustomUserDetailsService,
-
-    @Autowired val oauth2UserService: CustomOAuth2UserService,
-
-    @Autowired val successHandler: OAuth2AuthenticationSuccessHandler,
-
-    @Autowired val failureHandler: OAuth2AuthenticationFailureHandler,
-
-    @Autowired val cookieAuthReqRepo: HttpCookieOAuth2AuthorizationRequestRepository,
-
-    @Autowired val tokenProvider: TokenProvider,
-
-    @Autowired val appProperties: AppProperties
-
+    @Autowired val connFactoryLocator: ConnectionFactoryLocator,
+    @Autowired val usersConnectionRepo: UsersConnectionRepository
 ) : WebSecurityConfigurerAdapter() {
 
-    @Bean
-    fun tokenAuthenticationFilter(): TokenAuthenticationFilter =
-        TokenAuthenticationFilter(tokenProvider, userDetailsService)
+    @Value("\${app.base-url}")
+    private lateinit var baseUrl: String
 
-    override fun configure(authenticationManagerBuilder: AuthenticationManagerBuilder): Unit {
-        authenticationManagerBuilder
-            .userDetailsService(userDetailsService)
-            .passwordEncoder(passwordEncoder())
+    override fun configure(auth: AuthenticationManagerBuilder): Unit {
+        auth.userDetailsService(userDetailsService)
     }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     override fun authenticationManagerBean(): AuthenticationManager {
@@ -71,45 +62,23 @@ class SecurityConfig(
                 .and()
             .csrf()
                 .disable()
-            .formLogin()
-                .disable()
             .httpBasic()
                 .disable()
-            .exceptionHandling()
-                .authenticationEntryPoint(RestAuthenticationEntryPoint())
-                .and()
             .authorizeRequests()
-                .antMatchers("/",
-                    "/error",
-                    "/favicon.ico",
-                    "/**/*.png",
-                    "/**/*.gif",
-                    "/**/*.svg",
-                    "/**/*.jpg",
-                    "/**/*.html",
-                    "/**/*.css",
-                    "/**/*.js")
-                    .permitAll()
-                .antMatchers("/auth/**", "/oauth2/**")
+                .antMatchers("/", "/error", "/favicon.ico").permitAll()
+                .antMatchers("/login*", "/signin/**")
                     .permitAll()
                 .anyRequest()
                     .authenticated()
-                .and()
-            .oauth2Login()
-                .authorizationEndpoint()
-                    .baseUri("/oauth2/authorize")
-                    .authorizationRequestRepository(cookieAuthReqRepo)
                     .and()
-                .redirectionEndpoint()
-                    .baseUri("/oauth2/callback/*")
-                    .and()
-                .userInfoEndpoint()
-                    .userService(oauth2UserService)
-                    .and()
-                .successHandler(successHandler)
-                .failureHandler(failureHandler)
+            .formLogin().loginPage("/login").permitAll()
+    }
 
-        // Add our custom Token based authentication filter
-        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+    @Bean
+    fun providerSignInController(): ProviderSignInController {
+        val controller = ProviderSignInController(connFactoryLocator, usersConnectionRepo,
+            FacebookSignInAdapter())
+        controller.setApplicationUrl(baseUrl)
+        return controller
     }
 }
