@@ -22,8 +22,10 @@ class SocialConfig(@Autowired val fbSignup: FacebookConnectionSignup) : SocialCo
     override fun addConnectionFactories(cfConfig: ConnectionFactoryConfigurer,
                                         env: Environment): Unit {
         cfConfig.addConnectionFactory(
-            FacebookConnectionFactory(env.getProperty("spring.social.facebook.appId"),
-            env.getProperty("spring.social.facebook.appSecret"))
+            FacebookConnectionFactory(
+                env.getProperty("spring.social.facebook.appId"),
+                env.getProperty("spring.social.facebook.appSecret")
+            )
         )
     }
 

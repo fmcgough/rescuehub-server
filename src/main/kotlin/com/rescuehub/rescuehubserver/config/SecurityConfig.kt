@@ -27,6 +27,8 @@ import org.springframework.social.connect.UsersConnectionRepository
 import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository
 import org.springframework.social.connect.web.ProviderSignInController
 
+import org.springframework.social.security.SpringSocialConfigurer
+
 import org.springframework.social.facebook.connect.FacebookConnectionFactory
 
 import javax.inject.Inject
@@ -72,6 +74,8 @@ class SecurityConfig(
                     .authenticated()
                     .and()
             .formLogin().loginPage("/login").permitAll()
+                .and()
+            .apply(SpringSocialConfigurer())
     }
 
     @Bean
